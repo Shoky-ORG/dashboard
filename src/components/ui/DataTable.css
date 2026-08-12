@@ -1,0 +1,50 @@
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border-color);
+  background-color: var(--surface-card);
+}
+
+.shoky-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  text-align: left;
+}
+
+.shoky-table th {
+  padding: 14px 18px;
+  background-color: var(--bg-primary);
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-bottom: 1px solid var(--border-color);
+  white-space: nowrap;
+}
+
+.shoky-table td {
+  padding: 16px 18px;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.shoky-table tbody tr {
+  transition: background-color var(--transition-fast);
+}
+
+.shoky-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.shoky-table tbody tr:hover {
+  background-color: var(--surface-hover);
+}
+
+.clickable-row {
+  cursor: pointer;
+}

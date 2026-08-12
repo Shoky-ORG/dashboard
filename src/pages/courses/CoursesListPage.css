@@ -1,0 +1,67 @@
+.courses-list-page {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.page-action-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.page-header-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.page-header-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.table-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.search-input-wrapper {
+  width: 260px;
+}
+
+.select-filter-wrapper .shoky-select {
+  height: 40px;
+  padding: 0 12px;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-btn);
+  color: var(--text-primary);
+  font-size: 13px;
+  outline: none;
+}
+
+.course-code-cell {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.course-title-cell {
+  font-weight: 600;
+}
+
+.modal-form-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-actions-right {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 12px;
+}

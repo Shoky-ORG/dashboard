@@ -1,0 +1,57 @@
+:root {
+  /* Shoky Dark Space Color System */
+  --bg-primary: #0B1020;
+  --bg-secondary: #080C19;
+  
+  --surface-card: #121A2E;
+  --surface-elevated: #1A253E;
+  --surface-hover: #1E2D4A;
+  --surface-active: #25375A;
+  
+  /* Brand Accent Colors */
+  --primary: #9BE046;
+  --primary-hover: #86C737;
+  --primary-subtle: rgba(155, 224, 70, 0.12);
+  --primary-border: rgba(155, 224, 70, 0.3);
+  
+  --secondary: #2D5BFF;
+  --secondary-hover: #1F4BE5;
+  --secondary-subtle: rgba(45, 91, 255, 0.15);
+
+  /* Functional Status Colors */
+  --success: #34C759;
+  --success-subtle: rgba(52, 199, 89, 0.15);
+  
+  --warning: #FF9500;
+  --warning-subtle: rgba(255, 149, 0, 0.15);
+  
+  --danger: #FF4D6D;
+  --danger-subtle: rgba(255, 77, 109, 0.15);
+
+  /* Neutral Text Tokens */
+  --text-primary: #EAF0FF;
+  --text-secondary: #9AA6C3;
+  --text-muted: #6C7A9C;
+  --text-inverse: #0B1020;
+
+  /* Borders & Shadows */
+  --border-color: #26304A;
+  --border-focus: #2D5BFF;
+  --border-subtle: #1C263F;
+  --shadow-glow: 0 4px 20px rgba(155, 224, 70, 0.15);
+  --shadow-card: 0 8px 32px rgba(0, 0, 0, 0.36);
+
+  /* Geometry */
+  --radius-sm: 8px;
+  --radius-btn: 10px;
+  --radius-card: 16px;
+  --radius-lg: 20px;
+
+  /* Typography */
+  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* Transition Speeds */
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.25s ease;
+}

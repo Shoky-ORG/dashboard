@@ -1,0 +1,68 @@
+.stat-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.stat-title {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.stat-icon-wrapper {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--surface-hover);
+  color: var(--primary);
+}
+
+.stat-value {
+  font-family: var(--font-mono);
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--text-primary);
+  line-height: 1.1;
+}
+
+.stat-trend {
+  font-size: 12px;
+  font-weight: 500;
+  margin-top: 8px;
+}
+
+.trend-positive { color: var(--success); }
+.trend-negative { color: var(--danger); }
+.trend-neutral { color: var(--text-muted); }
+
+.theme-primary .stat-icon-wrapper {
+  background-color: var(--primary-subtle);
+  color: var(--primary);
+}
+
+.theme-secondary .stat-icon-wrapper {
+  background-color: var(--secondary-subtle);
+  color: var(--secondary);
+}
+
+.theme-info .stat-icon-wrapper {
+  background-color: rgba(0, 229, 255, 0.15);
+  color: #00E5FF;
+}
+
+.theme-warning .stat-icon-wrapper {
+  background-color: var(--warning-subtle);
+  color: var(--warning);
+}
