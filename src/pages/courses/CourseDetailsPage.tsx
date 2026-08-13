@@ -401,12 +401,15 @@ export const CourseDetailsPage: React.FC = () => {
         external_link: assignmentLink,
         file: assignmentFile,
       };
-      await assignmentsApi.createAssignment(courseId, payload);
+      const createdAssign = await assignmentsApi.createAssignment(courseId, payload);
       setToast({ message: 'Assignment created successfully', type: 'success' });
       setIsAssignmentModalOpen(false);
       setAssignmentTitle('');
       setAssignmentDesc('');
       setAssignmentFile(null);
+      if (createdAssign && (createdAssign.id || createdAssign.title)) {
+        setAssignments((prev) => [...prev.filter((a) => a.id !== createdAssign.id), createdAssign]);
+      }
       fetchCourseData();
     } catch (err: any) {
       setToast({ message: typeof err === 'string' ? err : 'Failed to create assignment', type: 'error' });
