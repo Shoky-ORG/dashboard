@@ -123,14 +123,19 @@ export const CourseDetailsPage: React.FC = () => {
         assignmentsApi.getAssignments(courseId).catch(() => []),
       ]);
 
+      const rawChapters = (Array.isArray(chapData) && chapData.length > 0)
+        ? chapData
+        : (Array.isArray(cData?.chapters) && cData.chapters.length > 0 ? cData.chapters : (Array.isArray(chapData) ? chapData : []));
+
       setCourse(cData);
       setInstructors(Array.isArray(instData) ? instData : []);
-      setChapters(Array.isArray(chapData) ? chapData : []);
+      setChapters(rawChapters);
       setAssignments(Array.isArray(assignData) ? assignData : []);
 
       // Load materials for chapters
       const matMap: Record<number, Material[]> = {};
-      for (const chap of chapData) {
+      for (const chap of rawChapters) {
+        if (!chap?.id) continue;
         try {
           const mats = await materialsApi.getMaterials(courseId, chap.id);
           matMap[chap.id] = mats;
@@ -225,18 +230,27 @@ export const CourseDetailsPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      await chaptersApi.createChapter(courseId, {
+      const createdChap = await chaptersApi.createChapter(courseId, {
         chapter_number: num,
         title_ar: titleAr,
         title_en: titleEn,
         order_index: num - 1,
       });
+
       setToast({ message: 'Chapter created successfully', type: 'success' });
       setIsChapterModalOpen(false);
       setChapterTitle('');
       setChapterTitleAr('');
       setChapterTitleEn('');
       setChapterOrder('1');
+
+      if (createdChap && (createdChap.id || createdChap.chapter_number)) {
+        setChapters((prev) => {
+          const exists = prev.some((c) => c.id === createdChap.id);
+          return exists ? prev.map((c) => (c.id === createdChap.id ? createdChap : c)) : [...prev, createdChap];
+        });
+      }
+      setActiveTab('chapters');
       fetchCourseData();
     } catch (err: any) {
       setToast({ message: typeof err === 'string' ? err : 'Failed to create chapter', type: 'error' });
