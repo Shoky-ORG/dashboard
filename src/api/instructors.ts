@@ -1,5 +1,6 @@
 import { apiClient } from './client';
 import { ApiResponse, CourseInstructor, InstructorRole } from '@/types/api';
+import { normalizeArrayResponse } from '@/utils/pagination';
 
 export interface AssignInstructorParams {
   userId: number;
@@ -14,12 +15,7 @@ export const instructorsApi = {
   getInstructors: async (courseId: number): Promise<CourseInstructor[]> => {
     try {
       const res = await apiClient.get<ApiResponse<any>>(`/courses/${courseId}/instructors`);
-      const data = res.data?.data;
-      if (Array.isArray(data)) return data;
-      if (data && typeof data === 'object' && Array.isArray((data as any).instructors)) {
-        return (data as any).instructors;
-      }
-      return [];
+      return normalizeArrayResponse<CourseInstructor>(res.data?.data || res.data);
     } catch (e) {
       return [];
     }

@@ -1,5 +1,6 @@
 import { apiClient } from './client';
 import { ApiResponse, Material, MaterialType } from '@/types/api';
+import { normalizeArrayResponse } from '@/utils/pagination';
 
 export interface CreateMaterialParams {
   title: string;
@@ -22,12 +23,7 @@ export const materialsApi = {
       const res = await apiClient.get<ApiResponse<any>>(
         `/courses/${courseId}/chapters/${chapterId}/materials`
       );
-      const data = res.data?.data;
-      if (Array.isArray(data)) return data;
-      if (data && typeof data === 'object' && Array.isArray((data as any).materials)) {
-        return (data as any).materials;
-      }
-      return [];
+      return normalizeArrayResponse<Material>(res.data?.data || res.data);
     } catch (e) {
       return [];
     }

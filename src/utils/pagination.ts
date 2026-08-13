@@ -1,12 +1,52 @@
 import { NormalizedPagination, PaginatedResponse } from '@/types/api';
 
 /**
+ * Safely extracts arrays from backend API responses.
+ * Handles arrays [...], wrapped objects { chapters: [...] }, and indexed objects { "0": {...}, "1": {...} }.
+ */
+export function normalizeArrayResponse<T>(data: any): T[] {
+  if (!data) return [];
+  if (Array.isArray(data)) return data;
+
+  if (typeof data === 'object') {
+    if (Array.isArray(data.chapters)) return data.chapters;
+    if (Array.isArray(data.items)) return data.items;
+    if (Array.isArray(data.materials)) return data.materials;
+    if (Array.isArray(data.assignments)) return data.assignments;
+    if (Array.isArray(data.instructors)) return data.instructors;
+    if (Array.isArray(data.users)) return data.users;
+    if (Array.isArray(data.courses)) return data.courses;
+    if (Array.isArray(data.data)) return normalizeArrayResponse<T>(data.data);
+
+    // If data is an indexed object like { "0": {...}, "1": {...} }
+    const values = Object.values(data);
+    if (
+      values.length > 0 &&
+      values.every(
+        (v) =>
+          v &&
+          typeof v === 'object' &&
+          ('id' in (v as any) ||
+            'chapter_number' in (v as any) ||
+            'user_id' in (v as any) ||
+            'code' in (v as any) ||
+            'title' in (v as any) ||
+            'title_ar' in (v as any))
+      )
+    ) {
+      return values as T[];
+    }
+  }
+  return [];
+}
+
+/**
  * Normalizes backend pagination responses into a unified structure.
  * Handles Format A (Users, Doctor Dashboard) and Format B (Courses, StudentProfiles, Enrollment).
  */
 export function normalizePaginatedResponse<T>(data: any, meta?: any): PaginatedResponse<T> {
-  const items: T[] = Array.isArray(data) ? data : data?.items || data?.users || data?.courses || [];
-  
+  const items: T[] = normalizeArrayResponse<T>(data);
+
   const rawMeta = meta || (data && !Array.isArray(data) ? data : {});
 
   // Format A: total, page, limit, total_pages

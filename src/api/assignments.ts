@@ -1,5 +1,6 @@
 import { apiClient } from './client';
 import { ApiResponse, Assignment, DeliveryMethod } from '@/types/api';
+import { normalizeArrayResponse } from '@/utils/pagination';
 
 export interface CreateAssignmentParams {
   title: string;
@@ -25,12 +26,7 @@ export const assignmentsApi = {
   getAssignments: async (courseId: number): Promise<Assignment[]> => {
     try {
       const res = await apiClient.get<ApiResponse<any>>(`/courses/${courseId}/assignments`);
-      const data = res.data?.data;
-      if (Array.isArray(data)) return data;
-      if (data && typeof data === 'object' && Array.isArray((data as any).assignments)) {
-        return (data as any).assignments;
-      }
-      return [];
+      return normalizeArrayResponse<Assignment>(res.data?.data || res.data);
     } catch (e) {
       return [];
     }

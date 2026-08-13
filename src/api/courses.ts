@@ -35,8 +35,42 @@ export interface UpdateCourseParams {
 
 export const coursesApi = {
   getCourses: async (params?: GetCoursesQueryParams): Promise<PaginatedResponse<Course>> => {
-    const res = await apiClient.get<ApiResponse<any>>('/courses', { params });
-    return normalizePaginatedResponse<Course>(res.data.data, res.data.meta);
+    const queryParams: any = { ...params };
+    const searchTerm = params?.search?.trim();
+
+    let isNonNumericSearch = false;
+    if (searchTerm) {
+      if (/^\d+$/.test(searchTerm)) {
+        queryParams.search = searchTerm;
+      } else {
+        delete queryParams.search;
+        isNonNumericSearch = true;
+      }
+    }
+
+    const res = await apiClient.get<ApiResponse<any>>('/courses', { params: queryParams });
+    const paginated = normalizePaginatedResponse<Course>(res.data.data, res.data.meta);
+
+    if (isNonNumericSearch && searchTerm) {
+      const term = searchTerm.toLowerCase();
+      const filteredItems = paginated.items.filter(
+        (c) =>
+          c.code?.toLowerCase().includes(term) ||
+          c.title_ar?.includes(term) ||
+          c.title_en?.toLowerCase().includes(term) ||
+          (c as any).name?.toLowerCase().includes(term)
+      );
+      return {
+        items: filteredItems,
+        pagination: {
+          ...paginated.pagination,
+          total: filteredItems.length,
+          totalPages: 1,
+        },
+      };
+    }
+
+    return paginated;
   },
 
   getCourseById: async (id: number): Promise<Course> => {

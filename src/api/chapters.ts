@@ -1,5 +1,6 @@
 import { apiClient } from './client';
 import { ApiResponse, Chapter } from '@/types/api';
+import { normalizeArrayResponse } from '@/utils/pagination';
 
 export interface CreateChapterParams {
   chapter_number: number;
@@ -19,19 +20,7 @@ export const chaptersApi = {
   getChapters: async (courseId: number): Promise<Chapter[]> => {
     try {
       const res = await apiClient.get<ApiResponse<any>>(`/courses/${courseId}/chapters`);
-      if (!res || !res.data) return [];
-      if (Array.isArray(res.data)) return res.data;
-
-      const data = res.data.data;
-      if (Array.isArray(data)) return data;
-      if (data && typeof data === 'object') {
-        if (Array.isArray(data.chapters)) return data.chapters;
-        if (Array.isArray(data.items)) return data.items;
-        if (Array.isArray(data.data)) return data.data;
-      }
-      if (Array.isArray((res.data as any).chapters)) return (res.data as any).chapters;
-      if (Array.isArray((res.data as any).items)) return (res.data as any).items;
-      return [];
+      return normalizeArrayResponse<Chapter>(res.data?.data || res.data);
     } catch (e) {
       console.warn(`Failed to fetch chapters for course ${courseId}:`, e);
       return [];
