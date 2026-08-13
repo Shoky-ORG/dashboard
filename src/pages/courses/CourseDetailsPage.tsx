@@ -293,9 +293,19 @@ export const CourseDetailsPage: React.FC = () => {
         external_link: materialLink,
         file: materialFile,
       };
-      await materialsApi.createMaterial(courseId, selectedChapterId, payload);
+      const createdMat = await materialsApi.createMaterial(courseId, selectedChapterId, payload);
       setToast({ message: 'Material uploaded successfully', type: 'success' });
       setIsMaterialModalOpen(false);
+
+      if (createdMat && (createdMat.id || createdMat.title)) {
+        setChapterMaterials((prev) => ({
+          ...prev,
+          [selectedChapterId]: [
+            ...(prev[selectedChapterId] || []).filter((m) => m.id !== createdMat.id),
+            createdMat,
+          ],
+        }));
+      }
       fetchCourseData();
     } catch (err: any) {
       setToast({ message: typeof err === 'string' ? err : 'Failed to upload material', type: 'error' });
@@ -617,14 +627,14 @@ export const CourseDetailsPage: React.FC = () => {
                             <div className="material-title">{mat.title}</div>
                             {mat.description && <div className="material-desc">{mat.description}</div>}
                             <div className="material-meta">
-                              <Badge variant="secondary" size="sm">{mat.type.toUpperCase()}</Badge>
-                              {mat.external_link && (
-                                <a href={mat.external_link} target="_blank" rel="noreferrer" className="mat-link">
+                              <Badge variant="secondary" size="sm">{(mat.material_type || mat.type || 'pdf').toUpperCase()}</Badge>
+                              {(mat.external_link || mat.reference_link) && (
+                                <a href={mat.external_link || mat.reference_link} target="_blank" rel="noreferrer" className="mat-link">
                                   <ExternalLink size={12} /> Open Link
                                 </a>
                               )}
-                              {mat.file_url && (
-                                <a href={mat.file_url} target="_blank" rel="noreferrer" className="mat-link">
+                              {(mat.file_url || mat.storage_url) && (
+                                <a href={mat.file_url || mat.storage_url} target="_blank" rel="noreferrer" className="mat-link">
                                   <Download size={12} /> Download File
                                 </a>
                               )}

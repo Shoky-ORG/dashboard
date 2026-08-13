@@ -92,12 +92,16 @@ export interface Chapter {
 
 export interface Material {
   id: number;
-  chapter_id: number;
+  chapter_id?: number;
   title: string;
   description?: string;
-  type: MaterialType;
+  material_type?: MaterialType;
+  type?: MaterialType;
   file_url?: string;
+  storage_url?: string;
   external_link?: string;
+  reference_link?: string;
+  uploaded_at?: string;
   created_at?: string;
 }
 
