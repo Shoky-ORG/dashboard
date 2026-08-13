@@ -75,6 +75,8 @@ export const CourseDetailsPage: React.FC = () => {
 
   const [isChapterModalOpen, setIsChapterModalOpen] = useState(false);
   const [chapterTitle, setChapterTitle] = useState('');
+  const [chapterTitleAr, setChapterTitleAr] = useState('');
+  const [chapterTitleEn, setChapterTitleEn] = useState('');
   const [chapterDesc, setChapterDesc] = useState('');
   const [chapterOrder, setChapterOrder] = useState('1');
 
@@ -208,19 +210,33 @@ export const CourseDetailsPage: React.FC = () => {
 
   const handleCreateChapter = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!chapterTitle) return;
+    const num = Number(chapterOrder) || 1;
+    if (num < 1) {
+      setToast({ message: 'Chapter number must be a positive integer (1 or higher)', type: 'error' });
+      return;
+    }
+
+    const titleAr = chapterTitleAr || chapterTitle;
+    const titleEn = chapterTitleEn || chapterTitle;
+    if (!titleAr && !titleEn) {
+      setToast({ message: 'Chapter title is required', type: 'error' });
+      return;
+    }
 
     setIsSubmitting(true);
     try {
       await chaptersApi.createChapter(courseId, {
-        title: chapterTitle,
-        description: chapterDesc,
-        order: Number(chapterOrder) || 1,
+        chapter_number: num,
+        title_ar: titleAr,
+        title_en: titleEn,
+        order_index: num - 1,
       });
       setToast({ message: 'Chapter created successfully', type: 'success' });
       setIsChapterModalOpen(false);
       setChapterTitle('');
-      setChapterDesc('');
+      setChapterTitleAr('');
+      setChapterTitleEn('');
+      setChapterOrder('1');
       fetchCourseData();
     } catch (err: any) {
       setToast({ message: typeof err === 'string' ? err : 'Failed to create chapter', type: 'error' });
@@ -547,8 +563,8 @@ export const CourseDetailsPage: React.FC = () => {
             chapters.map((chap) => (
               <Card key={chap.id} className="chapter-card">
                 <CardHeader
-                  title={`Chapter ${chap.order}: ${chap.title}`}
-                  subtitle={chap.description}
+                  title={`Chapter ${chap.chapter_number ?? chap.order ?? 1}: ${chap.title_ar || chap.title_en || chap.title || 'Untitled Chapter'}`}
+                  subtitle={chap.title_en && chap.title_ar ? chap.title_en : (chap.description || '')}
                   action={
                     <div style={{ display: 'flex', gap: '8px' }}>
                       <PermissionGate action="materials.create">
@@ -736,12 +752,28 @@ export const CourseDetailsPage: React.FC = () => {
       {/* Create Chapter Modal */}
       <Modal isOpen={isChapterModalOpen} onClose={() => setIsChapterModalOpen(false)} title="Create New Chapter">
         <form onSubmit={handleCreateChapter} className="modal-form-stack">
-          <Input label="Chapter Order / Number" type="number" value={chapterOrder} onChange={(e) => setChapterOrder(e.target.value)} required />
-          <Input label="Chapter Title" placeholder="e.g. Introduction to Data Structures" value={chapterTitle} onChange={(e) => setChapterTitle(e.target.value)} required />
-          <div className="shoky-input-group">
-            <label className="input-label">Description (Optional)</label>
-            <textarea className="shoky-input" rows={3} value={chapterDesc} onChange={(e) => setChapterDesc(e.target.value)} />
-          </div>
+          <Input
+            label="Chapter Number (1, 2, 3...)"
+            type="number"
+            min={1}
+            value={chapterOrder}
+            onChange={(e) => setChapterOrder(e.target.value)}
+            helperText="Must be a positive integer >= 1"
+            required
+          />
+          <Input
+            label="Chapter Title (Arabic) *"
+            placeholder="e.g. المحاضرة الأولى / هياكل البيانات"
+            value={chapterTitleAr}
+            onChange={(e) => setChapterTitleAr(e.target.value)}
+            required
+          />
+          <Input
+            label="Chapter Title (English)"
+            placeholder="e.g. Lecture 1 / Data Structures"
+            value={chapterTitleEn}
+            onChange={(e) => setChapterTitleEn(e.target.value)}
+          />
           <div className="modal-actions-right">
             <Button type="button" variant="outline" onClick={() => setIsChapterModalOpen(false)}>Cancel</Button>
             <Button type="submit" variant="primary" isLoading={isSubmitting}>Create Chapter</Button>

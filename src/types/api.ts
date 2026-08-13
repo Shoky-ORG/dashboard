@@ -78,9 +78,13 @@ export interface CourseInstructor {
 export interface Chapter {
   id: number;
   course_id: number;
-  title: string;
+  chapter_number?: number;
+  title_ar: string;
+  title_en?: string;
+  order_index?: number;
+  title?: string;
   description?: string;
-  order: number;
+  order?: number;
   created_at?: string;
   updated_at?: string;
   materials?: Material[];
