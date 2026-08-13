@@ -1,126 +1,108 @@
-import { User, RoleEnum, Department, Course, InstructorRole } from '@/types/api';
+import { RoleEnum, User, Course, StudentProfile } from '@/types/api';
 
 export type PermissionAction =
+  // Users Management
   | 'users.view'
   | 'users.create_admin'
   | 'users.create_doctor'
   | 'users.create_ta'
   | 'users.update'
   | 'users.delete'
+  // Courses Management
   | 'courses.view'
   | 'courses.create'
   | 'courses.update'
   | 'courses.delete'
-  | 'instructors.view'
+  // Instructors Assignment
   | 'instructors.assign_doctor'
   | 'instructors.assign_ta'
   | 'instructors.remove'
+  // Chapters
   | 'chapters.view'
   | 'chapters.create'
   | 'chapters.update'
   | 'chapters.delete'
+  // Materials
   | 'materials.view'
   | 'materials.create'
   | 'materials.update'
   | 'materials.delete'
+  // Assignments
   | 'assignments.view'
   | 'assignments.create'
   | 'assignments.update'
   | 'assignments.delete'
-  | 'students.view_course_students'
+  // Student Profiles
+  | 'students.view_all'
   | 'students.view_all_profiles'
+  | 'students.view_course_students'
+  // Notifications
   | 'notifications.send'
+  // Dashboards
   | 'dashboard.super_admin'
   | 'dashboard.admin'
   | 'dashboard.doctor'
   | 'dashboard.ta';
+
+export type Action = PermissionAction;
 
 export interface PermissionContext {
   user?: User | null;
   targetUser?: User;
   course?: Course;
   isCourseInstructor?: boolean;
-  instructorRoleInCourse?: InstructorRole;
+  instructorRoleInCourse?: 'doctor' | 'ta';
 }
 
-export function can(action: PermissionAction, context?: PermissionContext): boolean {
-  const currentUser = context?.user;
-  if (!currentUser || !currentUser.role) return false;
+export function can(action: PermissionAction, context: PermissionContext = {}): boolean {
+  const { user, targetUser, isCourseInstructor } = context;
 
-  const role: RoleEnum = currentUser.role.name;
+  if (!user || !user.role) return false;
+  const role: string = user.role.name;
 
-  // SUPER_ADMIN bypass: complete access to all features
+  // SUPER_ADMIN has full system bypass
   if (role === 'super_admin') return true;
 
   switch (action) {
-    // ── DASHBOARD ACCESS ──────────────────────────────────────────
-    case 'dashboard.super_admin':
-      return false; // already checked super_admin above
-    case 'dashboard.admin':
-      return role === 'admin';
-    case 'dashboard.doctor':
-      return role === 'doctor';
-    case 'dashboard.ta':
-      return role === 'ta';
-
-    // ── USER MANAGEMENT ───────────────────────────────────────────
+    // ── USERS ───────────────────────────────────────────────────────
     case 'users.view':
-      return role === 'admin';
-    
+      return ['admin'].includes(role);
+
     case 'users.create_admin':
     case 'users.create_doctor':
     case 'users.create_ta':
-      return false;
+      return false; // Handled strictly by super_admin bypass
 
     case 'users.update':
-    case 'users.delete': {
+    case 'users.delete':
       if (role !== 'admin') return false;
-      if (!context?.targetUser) return true;
-      
-      const targetUser = context.targetUser;
-      const targetRole = targetUser.role?.name;
-      
-      // Admin cannot update/delete other admins or super_admins
-      if (targetRole === 'admin' || targetRole === 'super_admin') return false;
-
-      // Admin can only manage users in their own department
-      if (currentUser.department && targetUser.department) {
-        return currentUser.department === targetUser.department;
-      }
+      if (!targetUser || !targetUser.role) return false;
+      // ADMIN cannot edit/delete super_admin or other admin users
+      if (['super_admin', 'admin'].includes(targetUser.role.name)) return false;
+      // ADMIN cannot edit/delete users outside their department
+      if (user.department && targetUser.department && user.department !== targetUser.department) return false;
       return true;
-    }
 
-    // ── COURSES ───────────────────────────────────────────────────
+    // ── COURSES ─────────────────────────────────────────────────────
     case 'courses.view':
-      return ['admin', 'doctor', 'ta'].includes(role);
+      return true;
 
     case 'courses.create':
       return ['admin', 'doctor'].includes(role);
 
     case 'courses.update':
-    case 'courses.delete': {
+    case 'courses.delete':
       if (role === 'admin') return true;
-      if (role === 'doctor') {
-        if (context?.course && context.course.created_by) {
-          return context.course.created_by === currentUser.id || context.isCourseInstructor === true;
-        }
-        return true;
-      }
+      if (role === 'doctor') return isCourseInstructor === true;
       return false;
-    }
 
-    // ── INSTRUCTORS MANAGEMENT ─────────────────────────────────────
-    case 'instructors.view':
-      return ['admin', 'doctor', 'ta'].includes(role);
-
+    // ── INSTRUCTORS ─────────────────────────────────────────────────
     case 'instructors.assign_doctor':
       return role === 'admin';
 
     case 'instructors.assign_ta':
       if (role === 'admin') return true;
-      if (role === 'doctor') {
-        return context?.isCourseInstructor === true && context?.instructorRoleInCourse === 'doctor';
-      }
+      if (role === 'doctor') return isCourseInstructor === true;
       return false;
 
     case 'instructors.remove':
@@ -142,9 +124,9 @@ export function can(action: PermissionAction, context?: PermissionContext): bool
       return ['admin', 'doctor', 'ta'].includes(role);
 
     case 'materials.create':
+    case 'materials.update':
       return ['admin', 'doctor', 'ta'].includes(role);
 
-    case 'materials.update':
     case 'materials.delete':
       return ['admin', 'doctor'].includes(role);
 
@@ -159,12 +141,23 @@ export function can(action: PermissionAction, context?: PermissionContext): bool
     case 'students.view_course_students':
       return ['admin', 'doctor'].includes(role);
 
+    case 'students.view_all':
     case 'students.view_all_profiles':
-      return ['admin', 'doctor'].includes(role);
+      return ['admin'].includes(role);
 
     // ── NOTIFICATIONS ──────────────────────────────────────────────
     case 'notifications.send':
       return ['admin', 'doctor'].includes(role);
+
+    // ── DASHBOARDS ─────────────────────────────────────────────────
+    case 'dashboard.super_admin':
+      return role === 'super_admin';
+    case 'dashboard.admin':
+      return role === 'admin';
+    case 'dashboard.doctor':
+      return role === 'doctor';
+    case 'dashboard.ta':
+      return role === 'ta';
 
     default:
       return false;

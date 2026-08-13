@@ -74,6 +74,7 @@ export const CourseDetailsPage: React.FC = () => {
   const [assignRole, setAssignRole] = useState<InstructorRole>('ta');
 
   const [isChapterModalOpen, setIsChapterModalOpen] = useState(false);
+  const [editingChapter, setEditingChapter] = useState<Chapter | null>(null);
   const [chapterTitle, setChapterTitle] = useState('');
   const [chapterTitleAr, setChapterTitleAr] = useState('');
   const [chapterTitleEn, setChapterTitleEn] = useState('');
@@ -84,6 +85,7 @@ export const CourseDetailsPage: React.FC = () => {
   const [chapterMaterials, setChapterMaterials] = useState<Record<number, Material[]>>({});
 
   const [isMaterialModalOpen, setIsMaterialModalOpen] = useState(false);
+  const [editingMaterial, setEditingMaterial] = useState<{ chapterId: number; material: Material } | null>(null);
   const [materialTitle, setMaterialTitle] = useState('');
   const [materialDesc, setMaterialDesc] = useState('');
   const [materialType, setMaterialType] = useState<MaterialType>('pdf');
@@ -213,7 +215,24 @@ export const CourseDetailsPage: React.FC = () => {
     }
   };
 
-  const handleCreateChapter = async (e: React.FormEvent) => {
+  const handleOpenCreateChapterModal = () => {
+    setEditingChapter(null);
+    setChapterOrder('1');
+    setChapterTitleAr('');
+    setChapterTitleEn('');
+    setChapterTitle('');
+    setIsChapterModalOpen(true);
+  };
+
+  const handleOpenEditChapterModal = (chap: Chapter) => {
+    setEditingChapter(chap);
+    setChapterOrder(String(chap.chapter_number || chap.order || 1));
+    setChapterTitleAr(chap.title_ar || chap.title || '');
+    setChapterTitleEn(chap.title_en || chap.title || '');
+    setIsChapterModalOpen(true);
+  };
+
+  const handleSaveChapter = async (e: React.FormEvent) => {
     e.preventDefault();
     const num = Number(chapterOrder) || 1;
     if (num < 1) {
@@ -230,30 +249,38 @@ export const CourseDetailsPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const createdChap = await chaptersApi.createChapter(courseId, {
-        chapter_number: num,
-        title_ar: titleAr,
-        title_en: titleEn,
-        order_index: num - 1,
-      });
+      if (editingChapter) {
+        const updated = await chaptersApi.updateChapter(courseId, editingChapter.id, {
+          chapter_number: num,
+          title_ar: titleAr,
+          title_en: titleEn,
+          order_index: num - 1,
+        });
+        setToast({ message: 'Chapter updated successfully', type: 'success' });
+        setChapters((prev) => prev.map((c) => (c.id === editingChapter.id ? { ...c, ...updated } : c)));
+      } else {
+        const createdChap = await chaptersApi.createChapter(courseId, {
+          chapter_number: num,
+          title_ar: titleAr,
+          title_en: titleEn,
+          order_index: num - 1,
+        });
+        setToast({ message: 'Chapter created successfully', type: 'success' });
+        if (createdChap && (createdChap.id || createdChap.chapter_number)) {
+          setChapters((prev) => [...prev.filter((c) => c.id !== createdChap.id), createdChap]);
+        }
+      }
 
-      setToast({ message: 'Chapter created successfully', type: 'success' });
       setIsChapterModalOpen(false);
+      setEditingChapter(null);
       setChapterTitle('');
       setChapterTitleAr('');
       setChapterTitleEn('');
       setChapterOrder('1');
-
-      if (createdChap && (createdChap.id || createdChap.chapter_number)) {
-        setChapters((prev) => {
-          const exists = prev.some((c) => c.id === createdChap.id);
-          return exists ? prev.map((c) => (c.id === createdChap.id ? createdChap : c)) : [...prev, createdChap];
-        });
-      }
       setActiveTab('chapters');
       fetchCourseData();
     } catch (err: any) {
-      setToast({ message: typeof err === 'string' ? err : 'Failed to create chapter', type: 'error' });
+      setToast({ message: typeof err === 'string' ? err : 'Operation failed', type: 'error' });
     } finally {
       setIsSubmitting(false);
     }
@@ -270,8 +297,9 @@ export const CourseDetailsPage: React.FC = () => {
     }
   };
 
-  const handleOpenMaterialModal = (chapId: number) => {
+  const handleOpenCreateMaterialModal = (chapId: number) => {
     setSelectedChapterId(chapId);
+    setEditingMaterial(null);
     setMaterialTitle('');
     setMaterialDesc('');
     setMaterialType('pdf');
@@ -280,35 +308,68 @@ export const CourseDetailsPage: React.FC = () => {
     setIsMaterialModalOpen(true);
   };
 
-  const handleUploadMaterial = async (e: React.FormEvent) => {
+  const handleOpenEditMaterialModal = (chapId: number, mat: Material) => {
+    setSelectedChapterId(chapId);
+    setEditingMaterial({ chapterId: chapId, material: mat });
+    setMaterialTitle(mat.title);
+    setMaterialDesc(mat.description || '');
+    setMaterialType(mat.material_type || mat.type || 'pdf');
+    setMaterialLink(mat.external_link || mat.reference_link || '');
+    setMaterialFile(null);
+    setIsMaterialModalOpen(true);
+  };
+
+  const handleSaveMaterial = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!selectedChapterId || !materialTitle) return;
 
     setIsSubmitting(true);
     try {
-      const payload: CreateMaterialParams = {
-        title: materialTitle,
-        description: materialDesc,
-        type: materialType,
-        external_link: materialLink,
-        file: materialFile,
-      };
-      const createdMat = await materialsApi.createMaterial(courseId, selectedChapterId, payload);
-      setToast({ message: 'Material uploaded successfully', type: 'success' });
-      setIsMaterialModalOpen(false);
-
-      if (createdMat && (createdMat.id || createdMat.title)) {
+      if (editingMaterial) {
+        const updated = await materialsApi.updateMaterial(
+          courseId,
+          editingMaterial.chapterId,
+          editingMaterial.material.id,
+          {
+            title: materialTitle,
+            description: materialDesc,
+            type: materialType,
+            external_link: materialLink,
+          }
+        );
+        setToast({ message: 'Material updated successfully', type: 'success' });
         setChapterMaterials((prev) => ({
           ...prev,
-          [selectedChapterId]: [
-            ...(prev[selectedChapterId] || []).filter((m) => m.id !== createdMat.id),
-            createdMat,
-          ],
+          [editingMaterial.chapterId]: (prev[editingMaterial.chapterId] || []).map((m) =>
+            m.id === editingMaterial.material.id ? { ...m, ...updated } : m
+          ),
         }));
+      } else {
+        const payload: CreateMaterialParams = {
+          title: materialTitle,
+          description: materialDesc,
+          type: materialType,
+          external_link: materialLink,
+          file: materialFile,
+        };
+        const createdMat = await materialsApi.createMaterial(courseId, selectedChapterId, payload);
+        setToast({ message: 'Material uploaded successfully', type: 'success' });
+        if (createdMat && (createdMat.id || createdMat.title)) {
+          setChapterMaterials((prev) => ({
+            ...prev,
+            [selectedChapterId]: [
+              ...(prev[selectedChapterId] || []).filter((m) => m.id !== createdMat.id),
+              createdMat,
+            ],
+          }));
+        }
       }
+
+      setIsMaterialModalOpen(false);
+      setEditingMaterial(null);
       fetchCourseData();
     } catch (err: any) {
-      setToast({ message: typeof err === 'string' ? err : 'Failed to upload material', type: 'error' });
+      setToast({ message: typeof err === 'string' ? err : 'Failed to save material', type: 'error' });
     } finally {
       setIsSubmitting(false);
     }
@@ -575,7 +636,7 @@ export const CourseDetailsPage: React.FC = () => {
             </div>
 
             <PermissionGate action="chapters.create">
-              <Button variant="primary" size="sm" leftIcon={<Plus size={16} />} onClick={() => setIsChapterModalOpen(true)}>
+              <Button variant="primary" size="sm" leftIcon={<Plus size={16} />} onClick={handleOpenCreateChapterModal}>
                 Add Chapter
               </Button>
             </PermissionGate>
@@ -596,10 +657,19 @@ export const CourseDetailsPage: React.FC = () => {
                           variant="outline"
                           size="sm"
                           leftIcon={<Plus size={14} />}
-                          onClick={() => handleOpenMaterialModal(chap.id)}
+                          onClick={() => handleOpenCreateMaterialModal(chap.id)}
                         >
                           Add Material
                         </Button>
+                      </PermissionGate>
+
+                      <PermissionGate action="chapters.update">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          leftIcon={<Edit2 size={14} />}
+                          onClick={() => handleOpenEditChapterModal(chap)}
+                        />
                       </PermissionGate>
 
                       <PermissionGate action="chapters.delete">
@@ -640,14 +710,25 @@ export const CourseDetailsPage: React.FC = () => {
                               )}
                             </div>
                           </div>
-                          <PermissionGate action="materials.delete">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => handleDeleteMaterial(chap.id, mat.id)}
-                              leftIcon={<Trash2 size={14} style={{ color: 'var(--danger)' }} />}
-                            />
-                          </PermissionGate>
+                          <div style={{ display: 'flex', gap: '4px' }}>
+                            <PermissionGate action="materials.update">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleOpenEditMaterialModal(chap.id, mat)}
+                                leftIcon={<Edit2 size={14} />}
+                              />
+                            </PermissionGate>
+
+                            <PermissionGate action="materials.delete">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleDeleteMaterial(chap.id, mat.id)}
+                                leftIcon={<Trash2 size={14} style={{ color: 'var(--danger)' }} />}
+                              />
+                            </PermissionGate>
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -773,9 +854,9 @@ export const CourseDetailsPage: React.FC = () => {
         </form>
       </Modal>
 
-      {/* Create Chapter Modal */}
-      <Modal isOpen={isChapterModalOpen} onClose={() => setIsChapterModalOpen(false)} title="Create New Chapter">
-        <form onSubmit={handleCreateChapter} className="modal-form-stack">
+      {/* Create / Edit Chapter Modal */}
+      <Modal isOpen={isChapterModalOpen} onClose={() => setIsChapterModalOpen(false)} title={editingChapter ? 'Edit Chapter' : 'Create New Chapter'}>
+        <form onSubmit={handleSaveChapter} className="modal-form-stack">
           <Input
             label="Chapter Number (1, 2, 3...)"
             type="number"
@@ -800,15 +881,17 @@ export const CourseDetailsPage: React.FC = () => {
           />
           <div className="modal-actions-right">
             <Button type="button" variant="outline" onClick={() => setIsChapterModalOpen(false)}>Cancel</Button>
-            <Button type="submit" variant="primary" isLoading={isSubmitting}>Create Chapter</Button>
+            <Button type="submit" variant="primary" isLoading={isSubmitting}>
+              {editingChapter ? 'Save Changes' : 'Create Chapter'}
+            </Button>
           </div>
         </form>
       </Modal>
 
-      {/* Upload Material Modal */}
-      <Modal isOpen={isMaterialModalOpen} onClose={() => setIsMaterialModalOpen(false)} title="Upload Learning Material">
-        <form onSubmit={handleUploadMaterial} className="modal-form-stack">
-          <Input label="Material Title" placeholder="e.g. Lecture 1 PDF Notes" value={materialTitle} onChange={(e) => setMaterialTitle(e.target.value)} required />
+      {/* Upload / Edit Material Modal */}
+      <Modal isOpen={isMaterialModalOpen} onClose={() => setIsMaterialModalOpen(false)} title={editingMaterial ? 'Edit Learning Material' : 'Upload Learning Material'}>
+        <form onSubmit={handleSaveMaterial} className="modal-form-stack">
+          <Input label="Material Title *" placeholder="e.g. Lecture 1 PDF Notes" value={materialTitle} onChange={(e) => setMaterialTitle(e.target.value)} required />
           <div className="shoky-input-group">
             <label className="input-label">Material Type</label>
             <select className="shoky-input" value={materialType} onChange={(e) => setMaterialType(e.target.value as MaterialType)}>
@@ -821,11 +904,13 @@ export const CourseDetailsPage: React.FC = () => {
           {materialType === 'link' ? (
             <Input label="External URL" placeholder="https://..." value={materialLink} onChange={(e) => setMaterialLink(e.target.value)} required />
           ) : (
-            <FileUploader label="Upload Material File" file={materialFile} onFileChange={setMaterialFile} />
+            !editingMaterial && <FileUploader label="Upload Material File" file={materialFile} onFileChange={setMaterialFile} />
           )}
           <div className="modal-actions-right">
             <Button type="button" variant="outline" onClick={() => setIsMaterialModalOpen(false)}>Cancel</Button>
-            <Button type="submit" variant="primary" isLoading={isSubmitting}>Upload Material</Button>
+            <Button type="submit" variant="primary" isLoading={isSubmitting}>
+              {editingMaterial ? 'Save Changes' : 'Upload Material'}
+            </Button>
           </div>
         </form>
       </Modal>
