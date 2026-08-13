@@ -364,7 +364,15 @@ export const CourseDetailsPage: React.FC = () => {
         <div className="course-header-meta">
           <span className="course-code-badge">{course.code}</span>
           <h2 className="course-title">{course.title_ar}</h2>
+          {(course.title_en || (course as any).name) && (
+            <span style={{ fontSize: '16px', color: 'var(--text-muted)', fontWeight: 500 }}>
+              ({course.title_en || (course as any).name})
+            </span>
+          )}
           <DepartmentBadge department={course.department} size="md" />
+          <Badge variant={course.is_active !== false ? 'success' : 'danger'} size="md">
+            {course.is_active !== false ? 'Active' : 'Inactive'}
+          </Badge>
         </div>
       </div>
 
@@ -388,12 +396,32 @@ export const CourseDetailsPage: React.FC = () => {
                     <span className="meta-val">{course.title_ar}</span>
                   </div>
                   <div className="meta-item">
+                    <span className="meta-label">Title (English)</span>
+                    <span className="meta-val">{course.title_en || (course as any).name || 'N/A'}</span>
+                  </div>
+                  <div className="meta-item">
                     <span className="meta-label">Department</span>
                     <span className="meta-val"><DepartmentBadge department={course.department} /></span>
                   </div>
                   <div className="meta-item">
+                    <span className="meta-label">Academic Year</span>
+                    <span className="meta-val">Year {course.academic_year || 1}</span>
+                  </div>
+                  <div className="meta-item">
+                    <span className="meta-label">Semester</span>
+                    <span className="meta-val">Semester {course.semester || 1}</span>
+                  </div>
+                  <div className="meta-item">
                     <span className="meta-label">Credit Hours</span>
                     <span className="meta-val mono">{course.credit_hours || 3} Hours</span>
+                  </div>
+                  <div className="meta-item">
+                    <span className="meta-label">Status</span>
+                    <span className="meta-val">
+                      <Badge variant={course.is_active !== false ? 'success' : 'danger'} size="sm">
+                        {course.is_active !== false ? 'Active' : 'Inactive'}
+                      </Badge>
+                    </span>
                   </div>
                 </div>
 

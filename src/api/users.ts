@@ -12,7 +12,9 @@ export interface GetUsersQueryParams {
 
 export interface UpdateUserParams {
   fullName?: string;
+  email?: string;
   department?: Department;
+  roleId?: number;
   isActive?: boolean;
 }
 

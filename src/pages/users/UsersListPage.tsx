@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { usersApi } from '@/api/users';
 import { authApi } from '@/api/auth';
-import { User, RoleEnum, Department, NormalizedPagination } from '@/types/api';
+import { User, RoleEnum, Department, NormalizedPagination, ROLE_ID_MAP, ROLE_NAME_MAP } from '@/types/api';
 import { can } from '@/auth/permissions';
 import { useAuth } from '@/auth/AuthContext';
 import { PermissionGate } from '@/components/common/PermissionGate';
@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
 import { RoleBadge, DepartmentBadge, Badge } from '@/components/ui/Badge';
 import { Toast } from '@/components/ui/Toast';
-import { UserPlus, Search, Edit2, Trash2, ShieldCheck, Mail, User as UserIcon } from 'lucide-react';
+import { UserPlus, Search, Edit2, Trash2, Mail, User as UserIcon } from 'lucide-react';
 import './UsersListPage.css';
 
 export const UsersListPage: React.FC = () => {
@@ -42,7 +42,9 @@ export const UsersListPage: React.FC = () => {
   // Edit User Modal
   const [editingUser, setEditingUser] = useState<User | null>(null);
   const [editFullName, setEditFullName] = useState('');
+  const [editEmail, setEditEmail] = useState('');
   const [editDepartment, setEditDepartment] = useState<Department>('computer_science');
+  const [editRoleId, setEditRoleId] = useState<number>(3);
   const [editIsActive, setEditIsActive] = useState(true);
 
   const fetchUsers = useCallback(async (page: number = 1) => {
@@ -104,7 +106,9 @@ export const UsersListPage: React.FC = () => {
   const handleOpenEditUser = (user: User) => {
     setEditingUser(user);
     setEditFullName(user.fullName);
+    setEditEmail(user.email || '');
     setEditDepartment(user.department || 'computer_science');
+    setEditRoleId(user.role?.id || ROLE_ID_MAP[user.role?.name] || 5);
     setEditIsActive(user.isActive);
   };
 
@@ -116,10 +120,12 @@ export const UsersListPage: React.FC = () => {
     try {
       await usersApi.updateUser(editingUser.id, {
         fullName: editFullName,
+        email: editEmail,
         department: editDepartment,
+        roleId: Number(editRoleId),
         isActive: editIsActive,
       });
-      setToast({ message: 'User updated successfully', type: 'success' });
+      setToast({ message: 'User role and profile updated successfully', type: 'success' });
       setEditingUser(null);
       fetchUsers(pagination.page);
     } catch (err: any) {
@@ -188,7 +194,7 @@ export const UsersListPage: React.FC = () => {
               onClick={() => handleOpenEditUser(row)}
               leftIcon={<Edit2 size={14} />}
             >
-              Edit
+              Edit Role & Info
             </Button>
           </PermissionGate>
 
@@ -213,7 +219,7 @@ export const UsersListPage: React.FC = () => {
       <div className="page-action-header">
         <div>
           <h2 className="page-header-title">User & Staff Administration</h2>
-          <p className="page-header-desc">Manage system users, create staff accounts, and manage active permissions</p>
+          <p className="page-header-desc">Manage system users, modify roles, create staff accounts, and control permissions</p>
         </div>
 
         {currentUser?.role?.name === 'super_admin' && (
@@ -330,7 +336,7 @@ export const UsersListPage: React.FC = () => {
         </form>
       </Modal>
 
-      {/* Edit User Modal */}
+      {/* Edit User & Role Modal */}
       <Modal
         isOpen={!!editingUser}
         onClose={() => setEditingUser(null)}
@@ -343,6 +349,29 @@ export const UsersListPage: React.FC = () => {
             onChange={(e) => setEditFullName(e.target.value)}
             required
           />
+
+          <Input
+            label="Email Address"
+            type="email"
+            value={editEmail}
+            onChange={(e) => setEditEmail(e.target.value)}
+            required
+          />
+
+          <div className="shoky-input-group">
+            <label className="input-label">User Role *</label>
+            <select
+              className="shoky-input"
+              value={editRoleId}
+              onChange={(e) => setEditRoleId(Number(e.target.value))}
+            >
+              {currentUser?.role?.name === 'super_admin' && <option value={1}>Super Admin</option>}
+              {currentUser?.role?.name === 'super_admin' && <option value={2}>Admin</option>}
+              <option value={3}>Doctor</option>
+              <option value={4}>Teaching Assistant (TA)</option>
+              <option value={5}>Student</option>
+            </select>
+          </div>
 
           <div className="shoky-input-group">
             <label className="input-label">Department</label>

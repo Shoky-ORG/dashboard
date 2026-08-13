@@ -1,5 +1,21 @@
 export type RoleEnum = 'super_admin' | 'admin' | 'doctor' | 'ta' | 'student';
 
+export const ROLE_ID_MAP: Record<RoleEnum, number> = {
+  super_admin: 1,
+  admin: 2,
+  doctor: 3,
+  ta: 4,
+  student: 5,
+};
+
+export const ROLE_NAME_MAP: Record<number, RoleEnum> = {
+  1: 'super_admin',
+  2: 'admin',
+  3: 'doctor',
+  4: 'ta',
+  5: 'student',
+};
+
 export type Department = 'engineering' | 'computer_science' | 'business_administration';
 
 export type Track = 'AI' | 'CyberSecurity' | 'WebDevelopment' | 'Flutter' | 'UiUX';
@@ -37,9 +53,13 @@ export interface Course {
   name?: string;
   code: string;
   title_ar: string;
+  title_en?: string;
   department: Department;
   description?: string;
   credit_hours?: number;
+  academic_year?: number;
+  semester?: number;
+  is_active?: boolean;
   created_by?: number;
   created_at?: string;
   updated_at?: string;

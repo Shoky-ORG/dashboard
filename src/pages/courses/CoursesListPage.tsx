@@ -2,7 +2,6 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { coursesApi, CreateCourseParams, UpdateCourseParams } from '@/api/courses';
 import { Course, Department, NormalizedPagination } from '@/types/api';
-import { can } from '@/auth/permissions';
 import { useAuth } from '@/auth/AuthContext';
 import { PermissionGate } from '@/components/common/PermissionGate';
 import { Card, CardHeader, CardBody } from '@/components/ui/Card';
@@ -11,9 +10,9 @@ import { Pagination } from '@/components/ui/Pagination';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Modal } from '@/components/ui/Modal';
-import { DepartmentBadge } from '@/components/ui/Badge';
+import { DepartmentBadge, Badge } from '@/components/ui/Badge';
 import { Toast } from '@/components/ui/Toast';
-import { Plus, Search, Filter, BookOpen, ExternalLink, Edit2, Trash2 } from 'lucide-react';
+import { Plus, Search, ExternalLink, Edit2, Trash2 } from 'lucide-react';
 import './CoursesListPage.css';
 
 export const CoursesListPage: React.FC = () => {
@@ -32,14 +31,18 @@ export const CoursesListPage: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
 
-  // Modal State
+  // Modal Form State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCourse, setEditingCourse] = useState<Course | null>(null);
-  const [formTitleAr, setFormTitleAr] = useState('');
   const [formCode, setFormCode] = useState('');
+  const [formTitleAr, setFormTitleAr] = useState('');
+  const [formTitleEn, setFormTitleEn] = useState('');
   const [formDepartment, setFormDepartment] = useState<Department>('computer_science');
-  const [formDescription, setFormDescription] = useState('');
   const [formCreditHours, setFormCreditHours] = useState('3');
+  const [formAcademicYear, setFormAcademicYear] = useState('1');
+  const [formSemester, setFormSemester] = useState('1');
+  const [formDescription, setFormDescription] = useState('');
+  const [formIsActive, setFormIsActive] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const fetchCourses = useCallback(async (page: number = 1) => {
@@ -66,21 +69,29 @@ export const CoursesListPage: React.FC = () => {
 
   const handleOpenCreateModal = () => {
     setEditingCourse(null);
-    setFormTitleAr('');
     setFormCode('');
+    setFormTitleAr('');
+    setFormTitleEn('');
     setFormDepartment('computer_science');
-    setFormDescription('');
     setFormCreditHours('3');
+    setFormAcademicYear('1');
+    setFormSemester('1');
+    setFormDescription('');
+    setFormIsActive(true);
     setIsModalOpen(true);
   };
 
   const handleOpenEditModal = (course: Course) => {
     setEditingCourse(course);
-    setFormTitleAr(course.title_ar);
     setFormCode(course.code);
+    setFormTitleAr(course.title_ar);
+    setFormTitleEn(course.title_en || (course as any).name || '');
     setFormDepartment(course.department);
-    setFormDescription(course.description || '');
     setFormCreditHours(String(course.credit_hours || 3));
+    setFormAcademicYear(String(course.academic_year || 1));
+    setFormSemester(String(course.semester || 1));
+    setFormDescription(course.description || '');
+    setFormIsActive(course.is_active !== false);
     setIsModalOpen(true);
   };
 
@@ -95,21 +106,29 @@ export const CoursesListPage: React.FC = () => {
     try {
       if (editingCourse) {
         const updatePayload: UpdateCourseParams = {
-          title_ar: formTitleAr,
           code: formCode,
+          title_ar: formTitleAr,
+          title_en: formTitleEn || undefined,
           department: formDepartment,
-          description: formDescription,
-          credit_hours: Number(formCreditHours),
+          credit_hours: Number(formCreditHours) || 3,
+          academic_year: Number(formAcademicYear) || 1,
+          semester: Number(formSemester) || 1,
+          description: formDescription || undefined,
+          is_active: formIsActive,
         };
         await coursesApi.updateCourse(editingCourse.id, updatePayload);
         setToast({ message: 'Course updated successfully', type: 'success' });
       } else {
         const createPayload: CreateCourseParams = {
-          title_ar: formTitleAr,
           code: formCode,
+          title_ar: formTitleAr,
+          title_en: formTitleEn || undefined,
           department: formDepartment,
-          description: formDescription,
-          credit_hours: Number(formCreditHours),
+          credit_hours: Number(formCreditHours) || 3,
+          academic_year: Number(formAcademicYear) || 1,
+          semester: Number(formSemester) || 1,
+          description: formDescription || undefined,
+          is_active: formIsActive,
         };
         await coursesApi.createCourse(createPayload);
         setToast({ message: 'Course created successfully', type: 'success' });
@@ -141,20 +160,47 @@ export const CoursesListPage: React.FC = () => {
       accessor: (row) => (
         <span className="course-code-cell">{row.code}</span>
       ),
-      width: '120px',
+      width: '100px',
     },
     {
-      header: 'Title (Arabic)',
-      accessor: (row) => <span className="course-title-cell">{row.title_ar}</span>,
+      header: 'Course Titles',
+      accessor: (row) => (
+        <div>
+          <div className="course-title-cell">{row.title_ar}</div>
+          {(row.title_en || (row as any).name) && (
+            <div style={{ fontSize: '12px', color: 'var(--text-muted)' }}>
+              {row.title_en || (row as any).name}
+            </div>
+          )}
+        </div>
+      ),
     },
     {
       header: 'Department',
       accessor: (row) => <DepartmentBadge department={row.department} size="sm" />,
     },
     {
+      header: 'Year & Semester',
+      accessor: (row) => (
+        <div style={{ display: 'flex', gap: '4px' }}>
+          <Badge variant="info" size="sm">Year {row.academic_year || 1}</Badge>
+          <Badge variant="secondary" size="sm">Sem {row.semester || 1}</Badge>
+        </div>
+      ),
+    },
+    {
       header: 'Credit Hours',
       accessor: (row) => <span style={{ fontFamily: 'var(--font-mono)' }}>{row.credit_hours || 3} hrs</span>,
-      width: '120px',
+      width: '110px',
+    },
+    {
+      header: 'Status',
+      accessor: (row) => (
+        <Badge variant={row.is_active !== false ? 'success' : 'danger'} size="sm">
+          {row.is_active !== false ? 'Active' : 'Inactive'}
+        </Badge>
+      ),
+      width: '90px',
     },
     {
       header: 'Actions',
@@ -258,43 +304,96 @@ export const CoursesListPage: React.FC = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         title={editingCourse ? `Edit Course ${editingCourse.code}` : 'Create New Academic Course'}
+        size="lg"
       >
         <form onSubmit={handleSaveCourse} className="modal-form-stack">
-          <Input
-            label="Course Code"
-            placeholder="e.g. CS101 or ENG202"
-            value={formCode}
-            onChange={(e) => setFormCode(e.target.value)}
-            required
-          />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <Input
+              label="Course Code *"
+              placeholder="e.g. CS301 or ENG202"
+              value={formCode}
+              onChange={(e) => setFormCode(e.target.value)}
+              required
+            />
 
-          <Input
-            label="Course Title (Arabic)"
-            placeholder="e.g. مقدمة في علوم الحاسب"
-            value={formTitleAr}
-            onChange={(e) => setFormTitleAr(e.target.value)}
-            required
-          />
-
-          <div className="shoky-input-group">
-            <label className="input-label">Academic Department</label>
-            <select
-              className="shoky-input"
-              value={formDepartment}
-              onChange={(e) => setFormDepartment(e.target.value as Department)}
-            >
-              <option value="computer_science">Computer Science</option>
-              <option value="engineering">Engineering</option>
-              <option value="business_administration">Business Administration</option>
-            </select>
+            <div className="shoky-input-group">
+              <label className="input-label">Academic Department *</label>
+              <select
+                className="shoky-input"
+                value={formDepartment}
+                onChange={(e) => setFormDepartment(e.target.value as Department)}
+              >
+                <option value="computer_science">Computer Science</option>
+                <option value="engineering">Engineering</option>
+                <option value="business_administration">Business Administration</option>
+              </select>
+            </div>
           </div>
 
-          <Input
-            label="Credit Hours"
-            type="number"
-            value={formCreditHours}
-            onChange={(e) => setFormCreditHours(e.target.value)}
-          />
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <Input
+              label="Course Title (Arabic) *"
+              placeholder="e.g. هندسة البرمجيات"
+              value={formTitleAr}
+              onChange={(e) => setFormTitleAr(e.target.value)}
+              required
+            />
+
+            <Input
+              label="Course Title (English)"
+              placeholder="e.g. Software Engineering"
+              value={formTitleEn}
+              onChange={(e) => setFormTitleEn(e.target.value)}
+            />
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px' }}>
+            <Input
+              label="Credit Hours *"
+              type="number"
+              value={formCreditHours}
+              onChange={(e) => setFormCreditHours(e.target.value)}
+              required
+            />
+
+            <div className="shoky-input-group">
+              <label className="input-label">Academic Year *</label>
+              <select
+                className="shoky-input"
+                value={formAcademicYear}
+                onChange={(e) => setFormAcademicYear(e.target.value)}
+              >
+                <option value="1">Year 1</option>
+                <option value="2">Year 2</option>
+                <option value="3">Year 3</option>
+                <option value="4">Year 4</option>
+              </select>
+            </div>
+
+            <div className="shoky-input-group">
+              <label className="input-label">Semester *</label>
+              <select
+                className="shoky-input"
+                value={formSemester}
+                onChange={(e) => setFormSemester(e.target.value)}
+              >
+                <option value="1">Semester 1</option>
+                <option value="2">Semester 2</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="shoky-input-group">
+            <label className="input-label">Course Status</label>
+            <select
+              className="shoky-input"
+              value={formIsActive ? 'active' : 'inactive'}
+              onChange={(e) => setFormIsActive(e.target.value === 'active')}
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </select>
+          </div>
 
           <div className="shoky-input-group">
             <label className="input-label">Course Description (Optional)</label>

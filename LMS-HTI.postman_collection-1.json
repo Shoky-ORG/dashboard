@@ -1,0 +1,2461 @@
+{
+  "info": {
+    "_postman_id": "03af43fc-6ca7-490c-8669-970e9eced609",
+    "name": "LMS-HTI",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "46530355",
+    "_collection_link": "https://go.postman.co/collection/46530355-03af43fc-6ca7-490c-8669-970e9eced609?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "verify-email-student",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"42023068@hti.edu.eg\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/verify-email-student",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "verify-email-student"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify-email-staff",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"AyaHesham@hti.edu.eg\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/auth/verify-email-staff",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "auth",
+                "verify-email-staff"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "set-password-student",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"username\": \"john123\", \"password\": \"Pass@1234\", \"confirmPassword\": \"Pass@1234\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth//set-password-student/:sessionId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "",
+                "set-password-student",
+                ":sessionId"
+              ],
+              "variable": [
+                {
+                  "key": "sessionId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "set-password-staff",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"password\": \"Pass@1234\", \"confirmPassword\": \"Pass@1234\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/set-password-staff/:sessionId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "set-password-staff",
+                ":sessionId"
+              ],
+              "variable": [
+                {
+                  "key": "sessionId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const res = pm.response.json();\r",
+                  "pm.environment.set(\"ACCESS_TOKEN\", res.data.accessToken);\r",
+                  "pm.environment.set(\"REFRESH_TOKEN\", res.data.refreshToken);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"42023068@hti.edu.eg\", \"password\": \"Pass@1234\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/login",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create-admin",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"fullName\": \"Ahmed Ali\", \"email\": \"ahmed@hti.edu.eg\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/create-admin",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "create-admin"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create-doctor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"fullName\": \"Dr. Mohamed\", \"email\": \"mohamed@hti.edu.eg\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/create-doctor",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "create-doctor"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create-ta",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"fullName\": \"Sara Tarek\", \"email\": \"sara@hti.edu.eg\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/create-ta",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "create-ta"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"refreshToken\": {{Refresh_token}} }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/logout",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refresh-token",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"refreshToken\":\"{{Refresh_token}}\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/refresh-token",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "refresh-token"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"@hti.edu.eg\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/forgot-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "forgot-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "reset-password",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"password\": \"Pass@1234\", \"confirmPassword\": \"Pass@1234\" }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/auth/reset-password/:sessionId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "auth",
+                "reset-password",
+                ":sessionId"
+              ],
+              "variable": [
+                {
+                  "key": "sessionId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "student-profiles",
+      "item": [
+        {
+          "name": "CreateStudentProfile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "avatar",
+                  "type": "file",
+                  "uuid": "379e1d20-4b21-4701-932c-74f742fc20a6",
+                  "src": "postman-cloud:///1f150ac9-c7dc-4080-83b7-bd3bfa281229"
+                },
+                {
+                  "key": "student_number",
+                  "value": "42023068",
+                  "type": "text",
+                  "uuid": "4d515236-b06d-444a-9d25-d9ff871a0169"
+                },
+                {
+                  "key": "department",
+                  "value": "computer_science",
+                  "type": "text",
+                  "uuid": "de9ef9c7-1b61-4a8f-9f63-0a9b4f6f15a0"
+                },
+                {
+                  "key": "track",
+                  "value": "CyberSecurity",
+                  "type": "text",
+                  "uuid": "bfdca446-6782-4f25-8621-8f8c1bdad60e"
+                },
+                {
+                  "key": "enrollment_year",
+                  "value": "2023",
+                  "type": "text",
+                  "uuid": "d50a4c28-a8df-41da-b0c0-a8f112b3b250"
+                },
+                {
+                  "key": "bio",
+                  "value": "Hi, I'm a Backend Developer & CS Student",
+                  "type": "text",
+                  "uuid": "96f8c2c6-4ef2-4457-b7bb-69944f4d6a31"
+                },
+                {
+                  "key": "gpa",
+                  "value": "2.5",
+                  "type": "text",
+                  "uuid": "ccf1eb79-08d5-41ae-8ea8-ef85f98d98fb"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/student-profiles/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "student-profiles",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findAllStudentsProfile",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"42023042@hti.edu.eg\"\r\n}"
+            },
+            "url": {
+              "raw": "GET {{base_url}}/api/v1/student-profiles/findAllStudentProfiles",
+              "host": [
+                "GET {{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "student-profiles",
+                "findAllStudentProfiles"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateStudentProfile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "student_number",
+                  "value": "42023066",
+                  "type": "text",
+                  "uuid": "73e179b6-a417-43b3-afa5-1f11a2c7f2db"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/student-profiles/me",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "student-profiles",
+                "me"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "removeStudentProfile",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"42023068@hti.edu.eg\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/student-profiles/removeStudentProfile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "student-profiles",
+                "removeStudentProfile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findStudentProfile",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\":\"42023042@hti.edu.eg\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/student-profiles/findStudentProfile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "student-profiles",
+                "findStudentProfile"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dashboard",
+      "item": [
+        {
+          "name": "Student",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/dashboard/student",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dashboard",
+                "student"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "super-admin",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/dashboard/super-admin",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dashboard",
+                "super-admin"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "admin",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/dashboard/admin",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dashboard",
+                "admin"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "doctor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/dashboard/doctor?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "dashboard",
+                "doctor"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "courses",
+      "item": [
+        {
+          "name": "create",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"code\": \"CS301\",\r\n  \"credit_hours\": 3,\r\n  \"academic_year\": 3,\r\n  \"semester\": 1,\r\n  \"department\": \"computer_science\",\r\n \"title_en\":\"network\",\r\n \"title_ar\":\"شبكات\",\r\n \"description\":\"This course covers the fundamentals of computer networks\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-courses",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get-course",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-course",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"code\": \"CS101\",\r\n  \"credit_hours\": 3,\r\n  \"academic_year\": 2,\r\n  \"semester\": 1,\r\n  \"department\": \"computer_science\",\r\n \"title_en\":\"DS\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-course",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"code\": \"CS101\",\r\n  \"credit_hours\": 3,\r\n  \"academic_year\": 2,\r\n  \"semester\": 1,\r\n  \"department\": \"computer_science\",\r\n \"title_en\":\"DS\"\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/1",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                "1"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "enroll",
+      "item": [
+        {
+          "name": "enroll",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/course/1/enroll",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "course",
+                "1",
+                "enroll"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "un enroll",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/course/1/unenroll",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "course",
+                "1",
+                "unenroll"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getStudents",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "enrolled",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/enrollment/enrolled?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "enrollment",
+                "enrolled"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Notifications",
+      "item": [
+        {
+          "name": "send",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Student Message\",\r\n  \"message\": \"Hello students\",\r\n  \"type\": \"general\",\r\n  \"target_type\": \"specific_users\",\r\n  \"user_ids\": [42023068]\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "markAllAsRead",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Student Message\",\r\n  \"message\": \"Hello students\",\r\n  \"type\": \"general\",\r\n  \"target_type\": \"specific_users\",\r\n  \"user_ids\": [42023068]\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/read-all",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "read-all"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "markAsRead",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"title\": \"Student Message\",\r\n  \"message\": \"Hello students\",\r\n  \"type\": \"general\",\r\n  \"target_type\": \"specific_users\",\r\n  \"user_ids\": [42023068]\r\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/:id/read",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                ":id",
+                "read"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "latest_notifications",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"42023068@hti.edu.eg\", \"password\": \"Pass@1234\" }"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/notifications/latest",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "notifications",
+                "latest"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_all_notifications",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "materials",
+      "item": [
+        {
+          "name": "create_material",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title",
+                  "value": "شرح الفصل الأول",
+                  "type": "text",
+                  "uuid": "c0485390-29a8-4de9-9e41-4302873de750"
+                },
+                {
+                  "key": "material_type",
+                  "value": "link",
+                  "type": "text",
+                  "uuid": "13432ed8-82e6-4512-9b83-61321bc7210e"
+                },
+                {
+                  "key": "reference_link",
+                  "type": "text",
+                  "uuid": "5bc338cc-7bcd-4099-8d12-a20b3b2a0b5e",
+                  "value": "https://youtu.be/q6tUCEUqxTQ?si=5Jp8JMQ8hAV8T7Ss"
+                },
+                {
+                  "key": "reference_title",
+                  "value": "شرح يوتيوب",
+                  "type": "text",
+                  "uuid": "1f7dd41e-fd86-47e1-b392-1390f7344bac"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/chapters/:chapterId/materials",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "chapters",
+                ":chapterId",
+                "materials"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "3"
+                },
+                {
+                  "key": "chapterId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getALLMaterials",
+          "request": {
+            "method": "GET",
+            "header": []
+          },
+          "response": []
+        },
+        {
+          "name": "get_material",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/chapters/:chapterId/materials/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "chapters",
+                ":chapterId",
+                "materials",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                },
+                {
+                  "key": "chapterId",
+                  "value": "1"
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update_matreial",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/chapters/:chapterId/materials/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "chapters",
+                ":chapterId",
+                "materials",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                },
+                {
+                  "key": "chapterId",
+                  "value": "1"
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete_material",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/chapters/:chapterId/materials/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "chapters",
+                ":chapterId",
+                "materials",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                },
+                {
+                  "key": "chapterId",
+                  "value": "1"
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "chapters",
+      "item": [
+        {
+          "name": "create_chapter",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"chapter_number\": 1,\r\n  \"title_ar\": \"مقدمة\",\r\n  \"title_en\": \"Introduction\",\r\n  \"order_index\": 1\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/chapters",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "chapters"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "2"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getAllChapters",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/chapters",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "chapters"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get_chapter",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/chapters/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "chapters",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete_chapter",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/chapters/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "chapters",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update_chapter",
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"chapter_number\": 2,\r\n  \"title_ar\": \"الفصل الثاني\",\r\n  \"title_en\": \"Chapter Two\",\r\n  \"order_index\": 2\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/chapters/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "chapters",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "users",
+      "item": [
+        {
+          "name": "getAllUsers",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"42023025@hti.edu.eg\", \"password\": \"Pass@1234\" }"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getProfile",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"42023025@hti.edu.eg\", \"password\": \"Pass@1234\" }"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "getUserById",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"42023025@hti.edu.eg\", \"password\": \"Pass@1234\" }"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/:id   ",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":id   "
+              ],
+              "variable": [
+                {
+                  "key": "id   ",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateProfile",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"email\": \"42023025@hti.edu.eg\", \"password\": \"Pass@1234\" }"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1users/profile",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1users",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "change-password",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"currentPassword\": \"oldpass123\",\r\n  \"newPassword\": \"newpass123\",\r\n  \"confirmNewPassword\": \"newpass123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/change-password",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                "change-password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "updateUser",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"fullName\": \"Ahmed Ali\",\r\n  \"email\": \"ahmed@example.com\",\r\n  \"department\": \"CS\",\r\n  \"roleId\": 2,\r\n  \"isActive\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1//users/:id  ",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "",
+                "users",
+                ":id  "
+              ],
+              "variable": [
+                {
+                  "key": "id  ",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "deleteUser",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"password\": \"Pass@1234\", \"confirmPassword\": \"Pass@1234\" }"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/users/:id   ",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "users",
+                ":id   "
+              ],
+              "variable": [
+                {
+                  "key": "id   ",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "CourseInstructors",
+      "item": [
+        {
+          "name": "Add Instructor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"user_id\": 64,\r\n  \"role_in_course\": \"ta\"}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/instructors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "instructors"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "3"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Instructors",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/instructors",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "instructors"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "3"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Instructor Role",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n     \"role_in_course\": \"doctor\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/instructors/:userId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "instructors",
+                ":userId"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "3"
+                },
+                {
+                  "key": "userId",
+                  "value": "64"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Remove Instructor",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/instructors/:userId",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "instructors",
+                ":userId"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                },
+                {
+                  "key": "userId",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Assignemnt",
+      "item": [
+        {
+          "name": "create-assignment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "title ",
+                  "value": "Assignment7",
+                  "type": "text",
+                  "uuid": "8b226820-cad0-4001-9ae7-48d1cba4dd44"
+                },
+                {
+                  "key": "delivery_method",
+                  "value": "external_link",
+                  "type": "text",
+                  "uuid": "979c49ab-76ac-4052-ae53-c41c137ecd93"
+                },
+                {
+                  "key": "max_grade",
+                  "value": "10",
+                  "type": "text",
+                  "uuid": "c791c58a-33aa-4849-ab45-974ab104f5e3"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "uuid": "e8de5d82-86cb-416f-92fc-00cf7bb1a60c",
+                  "src": "postman-cloud:///1f159443-b2d5-41b0-9c79-3d177ad295bb"
+                },
+                {
+                  "key": "target_group",
+                  "value": "1 2 3",
+                  "type": "text",
+                  "uuid": "975a7815-7677-4abd-93ee-c42619ca5038"
+                },
+                {
+                  "key": "due_date",
+                  "value": "هيتسلم السيكشن الجاي باذن الله",
+                  "type": "text",
+                  "uuid": "a24009f1-8384-4c76-a1d8-e1a9e5be80db"
+                },
+                {
+                  "key": "external_form_link",
+                  "value": "https://forms.gle/Ef9YMMP9bsePksQz7",
+                  "type": "text",
+                  "uuid": "efbf8664-e960-4dcf-a93d-c96281edc3fb"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/:courseId/assignments",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                ":courseId",
+                "assignments"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "update-assignemnt",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PATCH",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/courses/1/assignments/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "courses",
+                "1",
+                "assignments",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "delete-assignment",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/assignments/courses/:courseId/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "assignments",
+                "courses",
+                ":courseId",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": ""
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findByCourse",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/assignments/courses/:courseId?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "assignments",
+                "courses",
+                ":courseId"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findMyAssignments",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/assignments/my?page=1&limit=10",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "assignments",
+                "my"
+              ],
+              "query": [
+                {
+                  "key": "page",
+                  "value": "1"
+                },
+                {
+                  "key": "limit",
+                  "value": "10"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "findOne",
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{ACCESS_TOKEN}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/api/v1/assignments/courses/:courseId/:id",
+              "host": [
+                "{{base_url}}"
+              ],
+              "path": [
+                "api",
+                "v1",
+                "assignments",
+                "courses",
+                ":courseId",
+                ":id"
+              ],
+              "variable": [
+                {
+                  "key": "courseId",
+                  "value": "1"
+                },
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -10,21 +10,27 @@ export interface GetCoursesQueryParams {
 }
 
 export interface CreateCourseParams {
-  name?: string;
-  title_ar: string;
   code: string;
+  title_ar: string;
+  title_en?: string;
   department: Department;
+  credit_hours: number;
+  academic_year: number;
+  semester: number;
   description?: string;
-  credit_hours?: number;
+  is_active?: boolean;
 }
 
 export interface UpdateCourseParams {
-  name?: string;
-  title_ar?: string;
   code?: string;
+  title_ar?: string;
+  title_en?: string;
   department?: Department;
-  description?: string;
   credit_hours?: number;
+  academic_year?: number;
+  semester?: number;
+  description?: string;
+  is_active?: boolean;
 }
 
 export const coursesApi = {
